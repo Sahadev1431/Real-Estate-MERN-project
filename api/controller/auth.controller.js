@@ -1,15 +1,17 @@
 import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
 
-export const signup = async (req,res) => {
+export const signup = async (req,res,next) => {
     const {username,email,password} = req.body
-    const hashedPassword = bcryptjs.hashSync(password,10)           //dont need to await bcz it is already sync
+    if (password.length < 8) {
+        return res.status(400).json({message : "Password must contains 8 characters"})
+    }
+    const hashedPassword =  bcryptjs.hashSync(password, 10);    
     const newUser = new User({username,email,password : hashedPassword})
-    
     try {
         await newUser.save()
         res.status(201).json("User Created Successfully!")
     } catch (error) {
-        res.status(500).json(error.message)
+        next(error)
     }
 }
