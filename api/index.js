@@ -3,7 +3,6 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route.js'
 import authRouter from './routes/auth.route.js'
-import signInRouteer from './routes/auth.signInRoute.js'
 
 dotenv.config()
 
@@ -22,7 +21,6 @@ app.use(express.json())
 
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
-app.use("/api/auth",signInRouteer)
 
 app.use((err,req,res,next) => {
     const statusCode = err.statusCode || 500
