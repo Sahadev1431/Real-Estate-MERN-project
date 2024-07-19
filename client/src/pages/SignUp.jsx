@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate,Navigate } from "react-router-dom";
+import {toast} from 'react-toastify'
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({});
+  const navigateTo = useNavigate()
+  const [formData, setFormData] = useState({username : "",email : "",password:""});
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData(oldData => ({
@@ -10,21 +12,34 @@ export default function SignUp() {
       [id] : value
     }))
   };
-
+  // console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const res = await fetch("api/auth/signup", 
-      {
-        method : "POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body : JSON.stringify(formData)
+    try {
+      const res = await fetch("/api/auth/signup",
+        {
+          method : "POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body : JSON.stringify(formData)
+        }
+      )
+      const data = await res.json()
+      console.log(data);
+      // toast.success(data.message)
+      if (res.ok) {
+        toast.success(data.message);
+        // navigateTo("/")
+      } else {
+        toast.error(data.message);
       }
-    )
-    const data = await res.json()
-    console.log(data);
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    }
   }
+
+
   return (
     <div className="p-3 max-w-xl mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
@@ -34,6 +49,7 @@ export default function SignUp() {
           placeholder="Username"
           className="border p-3 rounded-lg"
           id="username"
+          value={formData.username}
           onChange={handleChange}
         />
         <input
@@ -41,6 +57,7 @@ export default function SignUp() {
           placeholder="Email"
           className="border p-3 rounded-lg"
           id="email"
+          value={formData.email}
           onChange={handleChange}
         />
         <input
@@ -48,6 +65,7 @@ export default function SignUp() {
           placeholder="Password"
           className="border p-3 rounded-lg"
           id="password"
+          value={formData.password}
           onChange={handleChange}
         />
         <button className="bg-slate-700 p-3 rounded text-white uppercase hover:opacity-85">
