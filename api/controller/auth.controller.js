@@ -48,12 +48,12 @@ export const signin = async (req, res, next) => {
     );
     if (!validPassword) {
       return next(errorHandler(400, "Invalid Username or Password!"));
-    }
+    } 
+    const token = jwt.sign({id : validUser._id},process.env.JWT_SECRET)
     const {password : pass, ...rest} = validUser._doc
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
-    res
-      .cookie("access_token", token, { httpOnly: true })
-      .status(200)
-      .json(rest);
-  } catch (error) {}
+
+    res.cookie("access_token",token,{httpOnly : true}).status(200).json(rest)
+  } catch (error) {
+    next(error)
+  }
 };

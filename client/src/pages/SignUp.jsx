@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Link,useNavigate,Navigate } from "react-router-dom";
-import {toast} from 'react-toastify'
+import { Link,useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const navigateTo = useNavigate()
   const [formData, setFormData] = useState({username : "",email : "",password:""});
+  const [error,setError] = useState(null)
+  const [loading,setLoading] = useState(false)  
   const handleChange = (e) => {
+    setError(null)
     const { id, value } = e.target;
     setFormData(oldData => ({
       ...oldData,
@@ -16,6 +18,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      setLoading(true)
       const res = await fetch("/api/auth/signup",
         {
           method : "POST",
@@ -26,16 +29,18 @@ export default function SignUp() {
         }
       )
       const data = await res.json()
-      console.log(data);
-      // toast.success(data.message)
-      if (res.ok) {
-        toast.success(data.message);
-        // navigateTo("/")
-      } else {
-        toast.error(data.message);
+      // console.log(data);
+      if (data.success === false) {
+        setError(data.message)
+        setLoading(false)
+        return
       }
+      setLoading(false)
+      setError(null)
+      navigateTo("/sign-in")
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      setLoading(false)
+      setError(error.message)
     }
   }
 
@@ -68,8 +73,8 @@ export default function SignUp() {
           value={formData.password}
           onChange={handleChange}
         />
-        <button className="bg-slate-700 p-3 rounded text-white uppercase hover:opacity-85">
-          Sign up
+        <button disabled = {loading}className="bg-slate-700 p-3 rounded text-white uppercase hover:opacity-85">
+          {loading ? "loading..." : "Sign up"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
@@ -78,6 +83,7 @@ export default function SignUp() {
           <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
+      {error && <p className="text-red-500 mt-5">{error}</p>}
     </div>
   );
 }
