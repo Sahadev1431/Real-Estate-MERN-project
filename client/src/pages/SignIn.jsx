@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import {useDispatch ,useSelector} from 'react-redux'
 import {signInStart,signInFaliure,signInSuccess,setNull} from '../redux/user/userSlice.js'
+import OAuth from "../Components/OAuth.jsx";
 
 
 export default function SignIn() {
@@ -46,7 +47,7 @@ export default function SignIn() {
 
 
   return (
-    <div className="p-3 max-w-xl mx-auto">
+    <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
@@ -69,6 +70,7 @@ export default function SignIn() {
         <button disabled = {loading}className="bg-slate-700 p-3 rounded text-white uppercase hover:opacity-85">
           {loading ? "loading..." : "Sign in"}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>Dont Have An Account?</p>
