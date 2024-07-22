@@ -10,6 +10,8 @@ export default function SignIn() {
   const [formData, setFormData] = useState({email : "",password:""});
   const {loading,error} = useSelector((state) => state.user)
   const dispatch = useDispatch()
+
+
   const handleChange = (e) => {
     dispatch(setNull())
     const { id, value } = e.target;
@@ -18,6 +20,7 @@ export default function SignIn() {
       [id] : value
     }))
   };
+  
   // console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault()
