@@ -14,13 +14,13 @@ export const signup = async (req, res, next) => {
     return next(errorHandler(400, "User With This Email Already Exist"));
   }
 
-  if (password.length < 8) {
+  if (password.toString().length < 8) {
     return next(
       errorHandler(400, "Password Must Contain Atleast 8 Character!")
     );
   }
   // password = password.toString();
-  const hashedPassword = bcryptjs.hashSync(password, 10);
+  const hashedPassword = bcryptjs.hashSync(password.toString(), 10);
   const newUser = new User({ username, email, password: hashedPassword });
   try {
     await newUser.save();
