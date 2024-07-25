@@ -21,6 +21,7 @@ import {
   signOutSuccess
 } from "../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
+import {Link} from 'react-router-dom'
 
 // firebase storage
 //       allow read;
@@ -206,6 +207,9 @@ export default function Profile() {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link className="bg-green-700 p-3 rounded-lg text-white uppercase hover:opacity-90 text-center" to={"/create-listing"}>
+          create listing
+        </Link>
       </form>
       <div className="flex justify-between text-red-700 mt-5">
         <span onClick={handleDeleteUser} className="cursor-pointer">
