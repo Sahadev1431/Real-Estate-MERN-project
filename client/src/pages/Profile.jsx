@@ -15,7 +15,10 @@ import {
   deleteUserSuccess,
   deleteUserStart,
   deleteUserFailure,
-  setNull
+  setNull,
+  signOutFailure,
+  signOutStart,
+  signOutSuccess
 } from "../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 
@@ -36,7 +39,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   // console.log(file);
   // console.log(filePerc);
-  console.log(formData);
+  // console.log(formData);
 
   useEffect(() => {
     if (file) {
@@ -127,6 +130,22 @@ export default function Profile() {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutStart())
+      const res = await fetch("/api/auth/signout")
+
+      const data = await res.json()
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message))
+        return
+      }
+      dispatch(signOutSuccess(data))
+    } catch (error) {
+      dispatch(signOutFailure(error.message))
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -192,7 +211,7 @@ export default function Profile() {
         <span onClick={handleDeleteUser} className="cursor-pointer">
           Delete Account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span onClick={handleSignOut} className="cursor-pointer">Sign Out</span>
       </div>
       {error && <p className="text-red-500 mt-5">{error}</p>}
       <p className="text-green-700">
