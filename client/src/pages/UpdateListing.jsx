@@ -203,7 +203,8 @@ export default function CreateListing() {
             id="description"
             onChange={handleChange}
             value={formData.description}
-            maxLength="62"
+            style={{ whiteSpace: "pre-wrap", overflowWrap: "break-word" }}
+            // maxLength="62"
           />
           <input
             className="p-3 border rounded-lg"
