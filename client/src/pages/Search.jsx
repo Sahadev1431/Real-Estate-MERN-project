@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListingItem from "../Components/ListingItem";
 
 export default function Search() {
   const [sidebarData, setSidebarData] = useState({
@@ -11,82 +12,95 @@ export default function Search() {
     sort: "created_at",
     order: "desc",
   });
-  const [loading,setLoading] = useState(false)
-  const [listing,setListing] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState([]);
 
   console.log(listing);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(location.search)
-    const searchTermFromUrl =urlParams.get('searchTerm')
-    const typeFromUrl =urlParams.get('type')
-    const parkingFromUrl =urlParams.get('parking')
-    const furnishedFromUrl =urlParams.get('furnished')
-    const offerFromUrl =urlParams.get('offer')
-    const sortFromUrl =urlParams.get('sort')
-    const orderFromUrl =urlParams.get('order')
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("type");
+    const parkingFromUrl = urlParams.get("parking");
+    const furnishedFromUrl = urlParams.get("furnished");
+    const offerFromUrl = urlParams.get("offer");
+    const sortFromUrl = urlParams.get("sort");
+    const orderFromUrl = urlParams.get("order");
 
-    if (searchTermFromUrl || typeFromUrl || parkingFromUrl || furnishedFromUrl || offerFromUrl || sortFromUrl || orderFromUrl) {
-        setSidebarData({
-
-            searchTerm : searchTermFromUrl || "",
-            type : typeFromUrl || "all",
-            parking : parkingFromUrl === "true" ? true : false ,
-            furnished : furnishedFromUrl === "true" ? true : false ,
-            offer : offerFromUrl === "true" ? true : false ,
-            sort : sortFromUrl || "created_at",
-            order : orderFromUrl || "desc"
-        })
+    if (
+      searchTermFromUrl ||
+      typeFromUrl ||
+      parkingFromUrl ||
+      furnishedFromUrl ||
+      offerFromUrl ||
+      sortFromUrl ||
+      orderFromUrl
+    ) {
+      setSidebarData({
+        searchTerm: searchTermFromUrl || "",
+        type: typeFromUrl || "all",
+        parking: parkingFromUrl === "true" ? true : false,
+        furnished: furnishedFromUrl === "true" ? true : false,
+        offer: offerFromUrl === "true" ? true : false,
+        sort: sortFromUrl || "created_at",
+        order: orderFromUrl || "desc",
+      });
     }
 
     const fetchData = async () => {
-        setLoading(true)
+      setLoading(true);
 
-        const searchQuery = urlParams.toString()
+      const searchQuery = urlParams.toString();
 
-        const res = await fetch(`/api/listing/get?${searchQuery}`)
-        const data = await res.json()
-        setListing(data)
-        setLoading(false)
-    }
-    fetchData()
-  },[location.search])
+      const res = await fetch(`/api/listing/get?${searchQuery}`);
+      const data = await res.json();
+      setListing(data);
+      setLoading(false);
+    };
+    fetchData();
+  }, [location.search]);
 
-  const navigateTo = useNavigate()
+  const navigateTo = useNavigate();
   const handleChange = (e) => {
-    const {type,checked,value,id} = e.target;
+    const { type, checked, value, id } = e.target;
     if (id === "all" || id === "rent" || id === "sale") {
-        setSidebarData({...sidebarData,type : id})
-    } else if (id === 'sort_order') {
-        const sort = value.split('_')[0] || "created_at";
-        const order = value.split('_')[1] || "desc";
+      setSidebarData({ ...sidebarData, type: id });
+    } else if (id === "sort_order") {
+      const sort = value.split("_")[0] || "created_at";
+      const order = value.split("_")[1] || "desc";
 
-        setSidebarData({
-            ...sidebarData,sort,order
-        })
+      setSidebarData({
+        ...sidebarData,
+        sort,
+        order,
+      });
     } else {
-        setSidebarData({
-            ...sidebarData,
-            [id] : type == "checkbox" ? (checked || checked === 'true' ? true : false ): value
-        })
+      setSidebarData({
+        ...sidebarData,
+        [id]:
+          type == "checkbox"
+            ? checked || checked === "true"
+              ? true
+              : false
+            : value,
+      });
     }
-    
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const urlParams = new URLSearchParams()
-    urlParams.set("searchTerm",sidebarData.searchTerm)
-    urlParams.set("type",sidebarData.type)
-    urlParams.set("parking",sidebarData.parking)
-    urlParams.set("furnished",sidebarData.furnished)
-    urlParams.set("offer",sidebarData.offer)
-    urlParams.set("sort",sidebarData.sort)
-    urlParams.set("order",sidebarData.order)
-    const searchQuery = urlParams.toString()
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", sidebarData.searchTerm);
+    urlParams.set("type", sidebarData.type);
+    urlParams.set("parking", sidebarData.parking);
+    urlParams.set("furnished", sidebarData.furnished);
+    urlParams.set("offer", sidebarData.offer);
+    urlParams.set("sort", sidebarData.sort);
+    urlParams.set("order", sidebarData.order);
+    const searchQuery = urlParams.toString();
 
-    navigateTo(`/search?${searchQuery}`)
-  }
+    navigateTo(`/search?${searchQuery}`);
+  };
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
@@ -172,11 +186,13 @@ export default function Search() {
           </div>
           <div className="flex items-center gap-2">
             <label className="font-semibold">Sort:</label>
-            <select id="sort_order" className="border rounded-lg p-3"
-                onChange={handleChange}
-                defaultValue={"created_at_desc"}
+            <select
+              id="sort_order"
+              className="border rounded-lg p-3"
+              onChange={handleChange}
+              defaultValue={"created_at_desc"}
             >
-              <option  value="regularPrice_desc">Price High to Low</option>
+              <option value="regularPrice_desc">Price High to Low</option>
               <option value="regularPrice_asc">Price Low to High</option>
               <option value="createdAt_desc">Latest</option>
               <option value="createdAt_asc">Oldest</option>
@@ -187,10 +203,25 @@ export default function Search() {
           </button>
         </form>
       </div>
-      <div>
+      <div className="flex-1">
         <h1 className="text-3xl border-b font-semibold p-3 text-slate-700 mt-5">
           Listing Results:
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listing.length === 0 && (
+            <p className="text-xl text-slate-700">No Listing Found!</p>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {!loading &&
+            listing &&
+            listing.map((listi) => (
+              <ListingItem key={listi._id} listi={listi} />
+            ))}
+        </div>
       </div>
     </div>
   );
