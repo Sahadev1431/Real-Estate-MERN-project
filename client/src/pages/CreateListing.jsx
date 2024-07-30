@@ -175,7 +175,7 @@ export default function CreateListing() {
             placeholder="Name"
             id="name"
             maxLength="62"
-            minLength="10"
+            minLength="2"
             onChange={handleChange}
             value={formData.name}
             required

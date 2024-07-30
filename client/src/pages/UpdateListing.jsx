@@ -7,7 +7,7 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase.js";
 import { useSelector } from "react-redux";
-import { useNavigate,useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
@@ -32,55 +32,23 @@ export default function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigateTo = useNavigate();
-  const params = useParams()
+  const params = useParams();
   // console.log(formData);
 
   useEffect(() => {
     const fetchListing = async () => {
-      const listingId = params.listingId
-      const res = await fetch(`/api/listing/get/${listingId}`)
-      const data = await res.json()
+      const listingId = params.listingId;
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
 
       if (data.success === false) {
         console.log(data.message);
-        return
+        return;
       }
-      setFormData(data)
-    }
-    fetchListing()
-  },[])
-
-  const handleChange = (e) => {
-    const {
-      imageUrls,
-      name,
-      address,
-      description,
-      type,
-      bedrooms,
-      bathrooms,
-      regularPrice,
-      discountPrice,
-      offer,
-      parking,
-      furnished,
-      id,
-      checked,
-      value,
-    } = e.target;
-
-    if (id === "sale" || id === "rent") {
-      setFormData({
-        ...formData,
-        type: id,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [id]: type === "checkbox" ? checked : value,
-      });
-    }
-  };
+      setFormData(data);
+    };
+    fetchListing();
+  }, []);
 
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
@@ -143,6 +111,38 @@ export default function CreateListing() {
     });
   };
 
+  const handleChange = (e) => {
+    const {
+      imageUrls,
+      name,
+      address,
+      description,
+      type,
+      bedrooms,
+      bathrooms,
+      regularPrice,
+      discountPrice,
+      offer,
+      parking,
+      furnished,
+      id,
+      checked,
+      value,
+    } = e.target;
+
+    if (id === "sale" || id === "rent") {
+      setFormData({
+        ...formData,
+        type: id,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [id]: type === "checkbox" ? checked : value,
+      });
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -191,7 +191,7 @@ export default function CreateListing() {
             placeholder="Name"
             id="name"
             maxLength="62"
-            minLength="10"
+            minLength="2"
             onChange={handleChange}
             value={formData.name}
             required
@@ -307,7 +307,9 @@ export default function CreateListing() {
               />
               <div className="flex flex-col items-center">
                 <p>Regular Price</p>
-                <span className="text-xs">(₹ / month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs">($ / month)</span>
+                )}
               </div>
             </div>
             {formData.offer && (
@@ -324,7 +326,9 @@ export default function CreateListing() {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted Price</p>
-                  <span className="text-xs">(₹ / month)</span>
+                  {formData.type === "rent" && (
+                    <span className="text-xs">($ / month)</span>
+                  )}
                 </div>
               </div>
             )}

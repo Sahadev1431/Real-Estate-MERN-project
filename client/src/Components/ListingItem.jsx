@@ -5,7 +5,7 @@ import { MdLocationOn } from "react-icons/md";
 export default function ListingItem({ listi }) {
   return (
     <div className="bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full sm:w-[330px]">
-      <Link to={`listing/${listi._id}`}>
+      <Link to={`/listing/${listi._id}`}>
         <img
           src={listi.imageUrls[0]}
           alt="listing cover"
@@ -17,20 +17,30 @@ export default function ListingItem({ listi }) {
           </p>
           <div className="flex items-center gap-1">
             <MdLocationOn className="h-4 w-4 text-green-700" />
-            <p className="text-sm text-gray-600 truncate w-full">{listi.address}</p>
+            <p className="text-sm text-gray-600 truncate w-full">
+              {listi.address}
+            </p>
           </div>
-          <p className="text-sm text-gray-600 line-clamp-2">{listi.description}</p>
+          <p className="text-sm text-gray-600 line-clamp-2">
+            {listi.description}
+          </p>
           <p className="text-slate-500 mt-2 font-semibold">
             ₹
-            {listi.offer ? listi.discountPrice.toLocaleString("en-IN") : listi.regularPrice.toLocaleString("en-IN")}
-            {listi.type === 'rent' && ' / month'}
+            {listi.offer
+              ? listi.discountPrice.toLocaleString("en-IN")
+              : listi.regularPrice.toLocaleString("en-IN")}
+            {listi.type === "rent" && " / month"}
           </p>
           <div className="text-slate-700 flex gap-4">
             <div className="font-bold text-xs">
-                {listi.bedrooms > 1 ? `${listi.bedrooms} beds` : `${listi.bedrooms} bed`}
+              {listi.bedrooms > 1
+                ? `${listi.bedrooms} beds`
+                : `${listi.bedrooms} bed`}
             </div>
             <div className="font-bold text-xs">
-                {listi.bathrooms > 1 ? `${listi.bathrooms} baths` : `${listi.bathrooms} bath`}
+              {listi.bathrooms > 1
+                ? `${listi.bathrooms} baths`
+                : `${listi.bathrooms} bath`}
             </div>
           </div>
         </div>
