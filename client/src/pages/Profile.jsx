@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   getDownloadURL,
   getStorage,
@@ -20,14 +20,6 @@ import {
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice.js";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-
-// firebase storage
-//       allow read;
-//       allow write : if
-//       request.resource.size < 2 * 1024 * 1024 &&
-//       request.resource.contentType.matches('image/.*')
 
 export default function Profile() {
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -39,16 +31,23 @@ export default function Profile() {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showListingError, setShowListingError] = useState(false);
   const [userListing, setUserListing] = useState([]);
+  const [noListing, setNoListing] = useState(false);
   const dispatch = useDispatch();
-  // console.log(file);
-  // console.log(filePerc);
-  // console.log(formData);
 
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
   }, [file]);
+  useEffect(() => {
+    let timer;
+    if (noListing) {
+      timer = setTimeout(() => {
+        setNoListing(false);
+      }, 3000); // Hide message after 3 seconds
+    }
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, [noListing]);
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -61,10 +60,8 @@ export default function Profile() {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        // console.log("Upload is " + progress + "% done");
         setFilePerc(Math.round(progress));
       },
-
       (error) => {
         setFileUploadError(true);
       },
@@ -155,9 +152,13 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         setShowListingError(true);
-        true;
+        return;
       }
-      // console.log(data);
+
+      if (data.length === 0) {
+        setNoListing(true);
+        return;
+      }
       setUserListing(data);
     } catch (error) {
       setShowListingError(true);
@@ -205,7 +206,7 @@ export default function Profile() {
         <p className="text-sm self-center">
           {fileUploadError ? (
             <span className="text-red-700">
-              Error While Uploading Image(image must be less than 2 mb)
+              Error While Uploading Image(image must be less than 5 mb)
             </span>
           ) : filePerc > 0 && filePerc < 100 ? (
             <span className="text-slate-700">{`Uploading ${filePerc} %`}</span>
@@ -264,7 +265,13 @@ export default function Profile() {
       <p className="text-green-700">
         {updateSuccess ? "Updated Successfully!" : ""}
       </p>
-      <button onClick={handleShowListing} className="text-green-700 w-full">
+      <button
+        onClick={() => {
+          setNoListing(false); // Reset the noListing state before showing listings
+          handleShowListing();
+        }}
+        className="text-green-700 w-full"
+      >
         Show Listings
       </button>
       <p className="text-red-700 mt-5">
@@ -308,6 +315,10 @@ export default function Profile() {
             </div>
           ))}
         </div>
+      )}
+
+      {noListing && (
+        <p className="text-red-700">You have not created any listing yet!</p>
       )}
     </div>
   );

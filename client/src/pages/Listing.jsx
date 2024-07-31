@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { SwiperSlide, Swiper } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
@@ -25,6 +25,7 @@ export default function Listing() {
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
   const [contact, setContact] = useState(false);
+  const [directTosignIn,setDirectTosignIn] = useState(false)
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -153,6 +154,23 @@ export default function Listing() {
               </button>
             )}
             {contact && <Contact listing={listing} />}
+
+            {
+              !currentUser && (
+                <button
+                onClick={() => setDirectTosignIn(true)}
+                className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-90"
+              >
+                Contact Landlord
+              </button>
+              )
+            }
+            {directTosignIn && (
+              <div className="flex gap-2">
+              <p className="text-red-700">Please Sign in first!</p>
+              <Link to={"/sign-in"} className="text-blue-700">Sign in</Link>
+              </div>
+            ) }
           </div>
         </div>
       )}
