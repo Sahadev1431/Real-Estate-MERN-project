@@ -25,6 +25,9 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 
+app.get("/",(req,res) => {
+    res.send("hello")
+})
 app.use("/api/user",userRouter)
 app.use("/api/auth",authRouter)
 app.use("/api/listing",listingRouter)
