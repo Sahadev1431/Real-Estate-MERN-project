@@ -44,9 +44,9 @@ export default function Profile() {
     if (noListing) {
       timer = setTimeout(() => {
         setNoListing(false);
-      }, 3000); // Hide message after 3 seconds
+      }, 3000); 
     }
-    return () => clearTimeout(timer); // Cleanup the timer
+    return () => clearTimeout(timer); 
   }, [noListing]);
 
   const handleFileUpload = (file) => {
@@ -267,7 +267,7 @@ export default function Profile() {
       </p>
       <button
         onClick={() => {
-          setNoListing(false); // Reset the noListing state before showing listings
+          setNoListing(false); 
           handleShowListing();
         }}
         className="text-green-700 w-full"
